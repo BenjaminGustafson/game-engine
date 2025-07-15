@@ -1,23 +1,55 @@
-#include <vulkan/vulkan.h>
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <stdexcept>
+#include <cstdlib>
 
-int main() {
-	glfwInit();
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Vulkan Window", nullptr, nullptr);
+const uint32_t WIDTH = 800;
+const uint32_t HEIGHT = 600;
 
-	VkInstance instance;
-	VkInstanceCreateInfo createInfo{};
-	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-	vkCreateInstance(&createInfo, nullptr, &instance);
+class HelloTriangleApplication {
+public:
+	void run() {
+		initWindow();
+		initVulkan();
+		mainLoop();
+		cleanup();
+	}
+private:
+	GLFWwindow* window;
+	void initWindow() {
+		glfwInit();
 
-	while (!glfwWindowShouldClose(window)) {
-		glfwPollEvents();
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+		window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan Window", nullptr, nullptr);
+	}
+	void initVulkan() {
 	}
 
-	vkDestroyInstance(instance, nullptr);
-	glfwDestroyWindow(window);
-	glfwTerminate();
 
+	void mainLoop() {
+		while (!glfwWindowShouldClose(window)) {
+			glfwPollEvents();
+		}
+	}
+
+	void cleanup() {
+		glfwDestroyWindow(window);
+		glfwTerminate();
+	}
+};
+
+int main() {
+	HelloTriangleApplication app;
+
+	try {
+		app.run();
+	}
+	catch (const std::exception& e){
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
 }
